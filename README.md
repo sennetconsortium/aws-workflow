@@ -108,6 +108,6 @@ AWS WAF (Web Application Firewall) is integrated to monitor the HTTP and HTTPS r
 Custom response body:
 ```
 {
-    "message": "Sorry, your IP is blocked. Please Contact help@hubmapconsortium.org to request developer access to the target resources."
+    "message": "Sorry, your IP is blocked. Please Contact help@sennetconsortium.org to request developer access to the target resources."
 }
 ```
