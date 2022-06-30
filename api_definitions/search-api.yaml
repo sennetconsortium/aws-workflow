@@ -5,7 +5,7 @@ info:
     \ It handles data indexing and reindexing into the backend Elasticsearch. It also\
     \ accepts the search query and passes through to the Elasticsearch with data access\
     \ security check."
-  version: "2.2.0"
+  version: "1.0.0"
 servers:
 - url: "https://search.api.hubmapconsortium.org"
 paths:
