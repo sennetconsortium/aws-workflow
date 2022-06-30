@@ -2,7 +2,7 @@ openapi: "3.0.1"
 info:
   title: "SenNet UUID API"
   description: "The UUID API is a restful web service used to create and query UUIDs\
-    \ used across HuBMAP."
+    \ used across SenNet."
   version: "1.0.0"
 servers:
 - url: "https://uuid.api.sennetconsortium.org"
