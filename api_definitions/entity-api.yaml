@@ -3,7 +3,7 @@ info:
   title: "SenNet Entity API"
   description: "The SenNet Entity API is a standard RESTful web service with create,\
     \ update and read operations for the standard SenNet provenance graph entities."
-  version: "2.0.21"
+  version: "1.0.0"
 servers:
 - url: "https://entity.api.sennetconsortium.org"
 paths:
