@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 GLOBUS_APP_CLIENT_ID = os.environ['GLOBUS_APP_CLIENT_ID']
 GLOBUS_APP_CLIENT_SECRET = os.environ['GLOBUS_APP_CLIENT_SECRET']
-HUBMAP_READ_GROUP_UUID = os.environ['HUBMAP_READ_GROUP_UUID']
+SENNET_READ_GROUP_UUID = os.environ['SENNET_READ_GROUP_UUID']
 
 # Initialize AuthHelper class and ensure singleton
 try:
@@ -94,7 +94,7 @@ def lambda_handler(event, context):
       
                     logger.debug(f'=======User groups=======: {user_group_ids}')
                     
-                    if user_belongs_to_target_group(user_group_ids, HUBMAP_READ_GROUP_UUID):
+                    if user_belongs_to_target_group(user_group_ids, SENNET_READ_GROUP_UUID):
                         effect = 'Allow'
                     else:
                         context_authorizer_key_value = 'User token is not associated with the required globus group'
@@ -190,12 +190,6 @@ dict or str
        ],
        "iss":"https://auth.globus.org",
        "dependent_tokens_cache_id":"af2d5979090a97536619e8fbad1ebd0afa875c880a0d8058cddf510fc288555c",
-       "hmgroupids":[
-          "177f92c0-c871-11eb-9a04-a9c8d5e16226",
-          "89a69625-99d7-11ea-9366-0e98982705c1",
-          "5777527e-ec11-11e8-ab41-0af86edb4424",
-          "5bd084c8-edc2-11e8-802f-0e368f3075e8"
-       ],
        "group_membership_ids":[
           "177f92c0-c871-11eb-9a04-a9c8d5e16226",
           "89a69625-99d7-11ea-9366-0e98982705c1",
