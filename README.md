@@ -48,7 +48,7 @@ The variable `$context.authorizer.key` is made available in the authorizer lambd
 
 Note: when the `Authorization` header is not present from the request, it seems AWS API Gateway just returns 401 with the `$context.error.message` being "Unauthorized" and the authorizer lambda function never gets called. Thus why `$context.authorizer.key` is not set.
 
-## Handle undefiend resources with 404
+### Handle undefiend resources with 404
 
 By default AWS API Gateway returns 403 response on any undefined endpoints instead of 404. To solve this issue, we need to
 - add an `ANY` method to the root API
