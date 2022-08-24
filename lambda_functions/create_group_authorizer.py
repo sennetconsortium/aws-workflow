@@ -11,9 +11,6 @@ from hubmap_commons import globus_groups
 logging.getLogger().setLevel(logging.DEBUG)
 
 # Set logging format and level (default is warning)
-# All the API logging is forwarded to the uWSGI server and gets written into the log file `uwsgi-hubmap-auth.log`
-# Log rotation is handled via logrotate on the host system with a configuration file
-# Do NOT handle log file and rotation via the Python logging to avoid issues with multi-worker processes
 logging.basicConfig(format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s', level=logging.DEBUG, datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
@@ -95,7 +92,7 @@ def lambda_handler(event, context):
       
                     logger.debug(f'=======User groups=======: {user_group_ids}')
                     
-                    # The HuBMAP-Data-Admin group can also create new entities
+                    # The SenNet-Data-Admin group can also create new entities
                     if user_belongs_to_target_group(user_group_ids, SENNET_DATA_ADMIN_GROUP_UUID):
                         effect = 'Allow'
                     else:
