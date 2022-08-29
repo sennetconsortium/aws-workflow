@@ -22,7 +22,7 @@ SENNET_DATA_ADMIN_GROUP_UUID = os.environ['SENNET_DATA_ADMIN_GROUP_UUID']
 try:
     if AuthHelper.isInitialized() == False:
         # Tell commons to load the SenNet groups json
-        auth_helper_instance = AuthHelper.create(GLOBUS_APP_CLIENT_ID, GLOBUS_APP_CLIENT_SECRET, use_sennet_groups=True)
+        auth_helper_instance = AuthHelper.create(GLOBUS_APP_CLIENT_ID, GLOBUS_APP_CLIENT_SECRET)
 
         logger.info("Initialized AuthHelper class successfully :)")
     else:
