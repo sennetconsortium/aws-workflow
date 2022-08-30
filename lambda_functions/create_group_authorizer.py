@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 GLOBUS_APP_CLIENT_ID = os.environ['GLOBUS_APP_CLIENT_ID']
 GLOBUS_APP_CLIENT_SECRET = os.environ['GLOBUS_APP_CLIENT_SECRET']
-SENNET_DATA_ADMIN_GROUP_UUID = os.environ['SENNET_DATA_ADMIN_GROUP_UUID']
 
 # Initialize AuthHelper class and ensure singleton
 try:
@@ -91,16 +90,14 @@ def lambda_handler(event, context):
                     user_group_ids = user_info_dict['group_membership_ids']
       
                     logger.debug(f'=======User groups=======: {user_group_ids}')
-                    
-                    # The SenNet-Data-Admin group can also create new entities
-                    if user_belongs_to_target_group(user_group_ids, SENNET_DATA_ADMIN_GROUP_UUID):
+
+                    # Check to see if a user has any write privileges at all
+                    # User must have membership in any group with a ("data_provider": true) attribute or
+                    # a member of a group with type 'data-admin'
+                    if auth_helper_instance.has_read_privs(token):
                         effect = 'Allow'
                     else:
-                        # Make sure one of the user's groups is a data provider group
-                        if user_belongs_to_data_provider_group(user_group_ids):
-                            effect = 'Allow'
-                        else:
-                            context_authorizer_key_value = 'User token is not associated with any data provider groups'
+                        context_authorizer_key_value = 'User token is not associated with any data provider groups'
                 else:
                     # We use this message in the custom 401 response template
                     context_authorizer_key_value = user_info_dict
@@ -178,30 +175,46 @@ dict or str
     {
        "active":true,
        "token_type":"Bearer",
-       "scope":"urn:globus:auth:scope:nexus.api.globus.org:groups",
-       "client_id":"21f293b0-5fa5-4ee1-9e0e-3cf88bd70114",
+       "scope":"urn:globus:auth:scope:groups.api.globus.org:all",
+       "client_id":"c4018852-db38-4142-9e8c-fd5484806647",
        "username":"zhy19@pitt.edu",
        "name":"Zhou Yuan",
        "email":"ZHY19@pitt.edu",
-       "exp":1637513092,
-       "iat":1637340292,
-       "nbf":1637340292,
+       "exp":1661975278,
+       "iat":1661802478,
+       "nbf":1661802478,
        "sub":"c0f8907a-ec78-48a7-9c85-7da995b05446",
        "aud":[
-          "nexus.api.globus.org",
-          "21f293b0-5fa5-4ee1-9e0e-3cf88bd70114"
+          "groups.api.globus.org",
+          "c4018852-db38-4142-9e8c-fd5484806647"
        ],
        "iss":"https://auth.globus.org",
-       "dependent_tokens_cache_id":"af2d5979090a97536619e8fbad1ebd0afa875c880a0d8058cddf510fc288555c",
-       "group_membership_ids":[
-          "177f92c0-c871-11eb-9a04-a9c8d5e16226",
+       "dependent_tokens_cache_id":"f4d2f52defa604a898dabfc1e75d62006bcd181402517cdaab546d4a2e53f428",
+       "hmgroupids":[
+          "51155194-09e5-11ed-a1a7-39992a34a522",
+          "9cc440e5-ed89-11ec-87ec-31892bd489e1",
+          "57192604-18e0-11ed-b79b-972795fc9504",
+          "f654cd0d-1d9c-11ed-b7d5-972795fc9504",
           "89a69625-99d7-11ea-9366-0e98982705c1",
           "5777527e-ec11-11e8-ab41-0af86edb4424",
-          "5bd084c8-edc2-11e8-802f-0e368f3075e8"
+          "5bd084c8-edc2-11e8-802f-0e368f3075e8",
+          "177f92c0-c871-11eb-9a04-a9c8d5e16226"
        ],
-       "hmroleids":[],
+       "group_membership_ids":[
+          "51155194-09e5-11ed-a1a7-39992a34a522",
+          "9cc440e5-ed89-11ec-87ec-31892bd489e1",
+          "57192604-18e0-11ed-b79b-972795fc9504",
+          "f654cd0d-1d9c-11ed-b7d5-972795fc9504",
+          "89a69625-99d7-11ea-9366-0e98982705c1",
+          "5777527e-ec11-11e8-ab41-0af86edb4424",
+          "5bd084c8-edc2-11e8-802f-0e368f3075e8",
+          "177f92c0-c871-11eb-9a04-a9c8d5e16226"
+       ],
+       "hmroleids":[
+          
+       ],
        "hmscopes":[
-          "urn:globus:auth:scope:nexus.api.globus.org:groups"
+          "urn:globus:auth:scope:groups.api.globus.org:all"
        ]
     }
 """
@@ -223,74 +236,6 @@ def get_user_info(token):
     
     logger.debug(f'=======get_user_info() result=======: {result}')
     
-    return result
-    
- 
-"""
-Check if the user belongs to the target Globus group
-
-Parameters
-----------
-user_group_ids : list
-    A list of groups uuids associated with this token
-
-target_group_uuid : str
-    The uuid of target group
-    
-Returns
--------
-bool
-    True if the given token belongs to the given group, otherwise False
-"""
-def user_belongs_to_target_group(user_group_ids, target_group_uuid):
-    result = False
-    
-    for group_id in user_group_ids:
-        if group_id == target_group_uuid:
-            result = True
-            break
-    
-    logger.debug(f'=======user_belongs_to_target_group() result=======: {result}')
-
-    return result
-    
-
-"""
-Determine if the user is allowed to create new entity by checking if the user
-belongs to one of the data provider groups
-
-Parameters
-----------
-user_group_ids : list
-    A list of globus group uuids that the user has access to
-Returns
--------
-dict
-    The group info (group_uuid and group_name)
-"""
-def user_belongs_to_data_provider_group(user_group_ids):
-    result = False
-
-    # Get the globus groups info based on the groups json file in commons package
-    globus_groups_info = auth_helper_instance.get_globus_groups_info()
-    groups_by_id_dict = globus_groups_info['by_id']
-
-    # A list of data provider uuids
-    data_provider_uuids = []
-    for uuid_key in groups_by_id_dict:
-        if ('data_provider' in groups_by_id_dict[uuid_key]) and groups_by_id_dict[uuid_key]['data_provider']:
-            data_provider_uuids.append(uuid_key)
-
-    user_data_provider_uuids = []
-    for group_uuid in user_group_ids:
-        if group_uuid in data_provider_uuids:
-            user_data_provider_uuids.append(group_uuid)
-
-    if len(user_data_provider_uuids) > 0:
-        result = True
-
-    logger.debug(f'=======user_belongs_to_data_provider_group() result=======: {result}')
-
     return result
 
 

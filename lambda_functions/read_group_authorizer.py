@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 GLOBUS_APP_CLIENT_ID = os.environ['GLOBUS_APP_CLIENT_ID']
 GLOBUS_APP_CLIENT_SECRET = os.environ['GLOBUS_APP_CLIENT_SECRET']
-SENNET_READ_GROUP_UUID = os.environ['SENNET_READ_GROUP_UUID']
 
 # Initialize AuthHelper class and ensure singleton
 try:
@@ -92,10 +91,13 @@ def lambda_handler(event, context):
       
                     logger.debug(f'=======User groups=======: {user_group_ids}')
                     
-                    if user_belongs_to_target_group(user_group_ids, SENNET_READ_GROUP_UUID):
+                    # Check to see if a user has read privileges
+                    # The user has read privileges if they are a member of the
+                    # default read group or if they have write privileges at all (including data-admin)
+                    if auth_helper_instance.has_read_privs(token):
                         effect = 'Allow'
                     else:
-                        context_authorizer_key_value = 'User token is not associated with the required globus group'
+                        context_authorizer_key_value = 'User token is not associated with the required globus Sennet Read group'
                 else:
                     # We use this message in the custom 401 response template
                     context_authorizer_key_value = user_info_dict
@@ -173,30 +175,46 @@ dict or str
     {
        "active":true,
        "token_type":"Bearer",
-       "scope":"urn:globus:auth:scope:nexus.api.globus.org:groups",
-       "client_id":"21f293b0-5fa5-4ee1-9e0e-3cf88bd70114",
+       "scope":"urn:globus:auth:scope:groups.api.globus.org:all",
+       "client_id":"c4018852-db38-4142-9e8c-fd5484806647",
        "username":"zhy19@pitt.edu",
        "name":"Zhou Yuan",
        "email":"ZHY19@pitt.edu",
-       "exp":1637513092,
-       "iat":1637340292,
-       "nbf":1637340292,
+       "exp":1661975278,
+       "iat":1661802478,
+       "nbf":1661802478,
        "sub":"c0f8907a-ec78-48a7-9c85-7da995b05446",
        "aud":[
-          "nexus.api.globus.org",
-          "21f293b0-5fa5-4ee1-9e0e-3cf88bd70114"
+          "groups.api.globus.org",
+          "c4018852-db38-4142-9e8c-fd5484806647"
        ],
        "iss":"https://auth.globus.org",
-       "dependent_tokens_cache_id":"af2d5979090a97536619e8fbad1ebd0afa875c880a0d8058cddf510fc288555c",
-       "group_membership_ids":[
-          "177f92c0-c871-11eb-9a04-a9c8d5e16226",
+       "dependent_tokens_cache_id":"f4d2f52defa604a898dabfc1e75d62006bcd181402517cdaab546d4a2e53f428",
+       "hmgroupids":[
+          "51155194-09e5-11ed-a1a7-39992a34a522",
+          "9cc440e5-ed89-11ec-87ec-31892bd489e1",
+          "57192604-18e0-11ed-b79b-972795fc9504",
+          "f654cd0d-1d9c-11ed-b7d5-972795fc9504",
           "89a69625-99d7-11ea-9366-0e98982705c1",
           "5777527e-ec11-11e8-ab41-0af86edb4424",
-          "5bd084c8-edc2-11e8-802f-0e368f3075e8"
+          "5bd084c8-edc2-11e8-802f-0e368f3075e8",
+          "177f92c0-c871-11eb-9a04-a9c8d5e16226"
        ],
-       "hmroleids":[],
+       "group_membership_ids":[
+          "51155194-09e5-11ed-a1a7-39992a34a522",
+          "9cc440e5-ed89-11ec-87ec-31892bd489e1",
+          "57192604-18e0-11ed-b79b-972795fc9504",
+          "f654cd0d-1d9c-11ed-b7d5-972795fc9504",
+          "89a69625-99d7-11ea-9366-0e98982705c1",
+          "5777527e-ec11-11e8-ab41-0af86edb4424",
+          "5bd084c8-edc2-11e8-802f-0e368f3075e8",
+          "177f92c0-c871-11eb-9a04-a9c8d5e16226"
+       ],
+       "hmroleids":[
+          
+       ],
        "hmscopes":[
-          "urn:globus:auth:scope:nexus.api.globus.org:groups"
+          "urn:globus:auth:scope:groups.api.globus.org:all"
        ]
     }
 """
@@ -218,35 +236,6 @@ def get_user_info(token):
     
     logger.debug(f'=======get_user_info() result=======: {result}')
     
-    return result
-    
- 
-"""
-Check if the user belongs to the target Globus group
-
-Parameters
-----------
-user_group_ids : list
-    A list of groups uuids associated with this token
-
-target_group_uuid : str
-    The uuid of target group
-    
-Returns
--------
-bool
-    True if the given token belongs to the given group, otherwise False
-"""
-def user_belongs_to_target_group(user_group_ids, target_group_uuid):
-    result = False
-    
-    for group_id in user_group_ids:
-        if group_id == target_group_uuid:
-            result = True
-            break
-    
-    logger.debug(f'=======user_belongs_to_target_group() result=======: {result}')
-
     return result
     
 
