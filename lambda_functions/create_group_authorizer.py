@@ -94,7 +94,7 @@ def lambda_handler(event, context):
                     # Check to see if a user has any write privileges at all
                     # User must have membership in any group with a ("data_provider": true) attribute or
                     # a member of a group with type 'data-admin'
-                    if auth_helper_instance.has_read_privs(token):
+                    if auth_helper_instance.has_write_privs(token):
                         effect = 'Allow'
                     else:
                         context_authorizer_key_value = 'User token is not associated with any data provider groups'
