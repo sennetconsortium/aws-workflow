@@ -6,6 +6,26 @@ info:
 servers:
 - url: "https://ingest-api.dev.sennetconsortium.org"
 paths:
+  /privs/{group_uuid}/has-write:
+    get:
+      parameters:
+      - name: "group_uuid"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.VPCNLB}/privs/{group_uuid}/has-write"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.path.group_uuid: "method.request.path.group_uuid"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
   /{proxy+}:
     x-amazon-apigateway-any-method:
       parameters:
@@ -16,7 +36,7 @@ paths:
           type: "string"
       x-amazon-apigateway-integration:
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-404/invocations"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-404/invocations"
         responses:
           default:
             statusCode: "200"
@@ -67,6 +87,18 @@ paths:
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/logout"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+  /privs:
+    get:
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.VPCNLB}/privs"
         responses:
           default:
             statusCode: "200"
@@ -144,7 +176,7 @@ paths:
     x-amazon-apigateway-any-method:
       x-amazon-apigateway-integration:
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-404/invocations"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-404/invocations"
         responses:
           default:
             statusCode: "200"
@@ -204,6 +236,6 @@ components:
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
-        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-Read-Group-Authorizer/invocations"
+        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-Read-Group-Authorizer/invocations"
         authorizerResultTtlInSeconds: 0
         type: "token"
