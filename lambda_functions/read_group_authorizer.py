@@ -14,8 +14,10 @@ logging.basicConfig(format='[%(asctime)s] %(levelname)s in %(module)s: %(message
 logger = logging.getLogger(__name__)
 
 # Load environment variables
-GLOBUS_APP_CLIENT_ID = os.environ['GLOBUS_APP_CLIENT_ID']
-GLOBUS_APP_CLIENT_SECRET = os.environ['GLOBUS_APP_CLIENT_SECRET']
+GLOBUS_APP_CLIENT_ID_DEV_TEST = os.environ['GLOBUS_APP_CLIENT_ID_DEV_TEST']
+GLOBUS_APP_CLIENT_SECRET_DEV_TEST = os.environ['GLOBUS_APP_CLIENT_SECRET_DEV_TEST']
+GLOBUS_APP_CLIENT_ID_PROD = os.environ['GLOBUS_APP_CLIENT_ID_PROD']
+GLOBUS_APP_CLIENT_SECRET_PROD = os.environ['GLOBUS_APP_CLIENT_SECRET_PROD']
 
 # Initialize AuthHelper class and ensure singleton
 try:

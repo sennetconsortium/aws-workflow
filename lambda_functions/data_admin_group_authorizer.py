@@ -14,22 +14,11 @@ logging.basicConfig(format='[%(asctime)s] %(levelname)s in %(module)s: %(message
 logger = logging.getLogger(__name__)
 
 # Load environment variables
-GLOBUS_APP_CLIENT_ID = os.environ['GLOBUS_APP_CLIENT_ID']
-GLOBUS_APP_CLIENT_SECRET = os.environ['GLOBUS_APP_CLIENT_SECRET']
-
-# Initialize AuthHelper class and ensure singleton
-try:
-    if AuthHelper.isInitialized() == False:
-        # Tell commons to load the SenNet groups json
-        auth_helper_instance = AuthHelper.create(GLOBUS_APP_CLIENT_ID, GLOBUS_APP_CLIENT_SECRET)
-
-        logger.info("Initialized AuthHelper class successfully :)")
-    else:
-        auth_helper_instance = AuthHelper.instance()
-except Exception:
-    msg = "Failed to initialize the AuthHelper class"
-    # Log the full stack trace, prepend a line with our message
-    logger.exception(msg)
+GLOBUS_APP_CLIENT_ID_DEV_TEST = os.environ['GLOBUS_APP_CLIENT_ID_DEV_TEST']
+GLOBUS_APP_CLIENT_SECRET_DEV_TEST = os.environ['GLOBUS_APP_CLIENT_SECRET_DEV_TEST']
+GLOBUS_APP_CLIENT_ID_PROD = os.environ['GLOBUS_APP_CLIENT_ID_PROD']
+GLOBUS_APP_CLIENT_SECRET_PROD = os.environ['GLOBUS_APP_CLIENT_SECRET_PROD']
+SENNET_DATA_ADMIN_GROUP_UUID = os.environ['SENNET_DATA_ADMIN_GROUP_UUID']
 
 
 # When this lambda function is invoked, it runs this handler method (we use the default name)
@@ -47,7 +36,19 @@ def lambda_handler(event, context):
     
     # 'authorizationToken' and 'methodArn' are specific to the API Gateway Authorizer lambda function
     auth_header_value = event['authorizationToken']
+    # methodArn pattern: arn:aws:execute-api:{regionId}:{accountId}:{apiId}/{stage}/{httpVerb}/[{resource}/[{child-resources}]]
+    # Example: arn:aws:execute-api:us-east-1:557310757627:t314rhu1e5/DEV/PUT/reindex-all
     method_arn = event['methodArn']
+
+    # Parse the target stage
+    method_arn_parts = method_arn.split('/')
+
+    # Use uppercase for easy comparision
+    stage = method_arn_parts[1].upper()
+
+    # Default to DEV-TEST
+    globus_app_client_id = GLOBUS_APP_CLIENT_ID_DEV_TEST
+    globus_app_client_secret = GLOBUS_APP_CLIENT_SECRET_DEV_TEST
     
     logger.debug("Incoming authorizationToken: " + auth_header_value)
     logger.debug("Incoming methodArn: " + method_arn)
@@ -62,6 +63,25 @@ def lambda_handler(event, context):
         token = auth_header_value[6:].strip()
         
         logger.debug("Parsed Globus token: " + token)
+
+        if stage == 'PROD':
+            globus_app_client_id = GLOBUS_APP_CLIENT_ID_PROD
+            globus_app_client_secret = GLOBUS_APP_CLIENT_SECRET_PROD
+
+        # Initialize AuthHelper class and ensure singleton
+        try:
+            if AuthHelper.isInitialized() == False:
+                # Tell commons to load the SenNet groups json
+                auth_helper_instance = AuthHelper.create(globus_app_client_id, globus_app_client_secret)
+
+                logger.info(f'Initialized AuthHelper class successfully for {stage} Globus app:)')
+            else:
+                auth_helper_instance = AuthHelper.instance()
+        except Exception:
+            msg = f'Failed to initialize the AuthHelper class for {stage} Globus app :('
+            # Log the full stack trace, prepend a line with our message
+            logger.exception(msg)
+
     
         # you can send a 401 Unauthorized response to the client by failing like so:
         #raise Exception('Unauthorized')
