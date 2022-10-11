@@ -20,7 +20,6 @@ GLOBUS_APP_CLIENT_SECRET = os.environ['GLOBUS_APP_CLIENT_SECRET']
 # Initialize AuthHelper class and ensure singleton
 try:
     if AuthHelper.isInitialized() == False:
-        # Tell commons to load the SenNet groups json
         auth_helper_instance = AuthHelper.create(GLOBUS_APP_CLIENT_ID, GLOBUS_APP_CLIENT_SECRET)
 
         logger.info("Initialized AuthHelper class successfully :)")
@@ -46,11 +45,13 @@ def lambda_handler(event, context):
     context_authorizer_key_value = ''
     
     # 'authorizationToken' and 'methodArn' are specific to the API Gateway Authorizer lambda function
+    # 'methodArn' pattern: arn:aws:execute-api:{regionId}:{accountId}:{apiId}/{stage}/{httpVerb}/[{resource}/[{child-resources}]]
+    # Example: arn:aws:execute-api:us-east-1:557310757627:t314rhu1e5/DEV/PUT/reindex-all
     auth_header_value = event['authorizationToken']
     method_arn = event['methodArn']
     
-    logger.debug("Incoming authorizationToken: " + auth_header_value)
-    logger.debug("Incoming methodArn: " + method_arn)
+    logger.debug(f'Incoming authorizationToken: {auth_header_value}')
+    logger.debug(f'Incoming methodArn: {method_arn}')
     
     # A bit validation on the header value
     if not auth_header_value:
@@ -78,9 +79,7 @@ def lambda_handler(event, context):
                 effect = 'Allow'
             else:
                 user_info_dict = get_user_info(token)
-                
-                logger.debug(f'=======User info=======: {user_info_dict}')
-                
+         
                 # The user_info_dict is a message str from commons when the token is invalid or expired
                 # Otherwise it's a dict on success
                 if isinstance(user_info_dict, dict):
@@ -224,8 +223,6 @@ def get_user_info(token):
     # The second argument indicates to get the groups information
     user_info_dict = auth_helper_instance.getUserInfo(token, True)
     
-    logger.debug(f'=======get_user_info() user_info_dict=======: {user_info_dict}')
-
     # The token is invalid or expired when its type is flask.Response
     # Otherwise a dict gets returned
     if isinstance(user_info_dict, Response):
