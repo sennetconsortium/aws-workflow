@@ -5,7 +5,7 @@ info:
     \ used across SenNet."
   version: "1.0.0"
 servers:
-- url: "https://uuid-api.dev.sennetconsortium.org"
+- url: "https://uuid.api.sennetconsortium.org"
 paths:
   /uuid/{id}/exists:
     get:
@@ -18,7 +18,6 @@ paths:
       security:
       - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/uuid/{id}/exists"
@@ -29,6 +28,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "id"
@@ -37,7 +37,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/uuid/{id}/exists"
@@ -48,6 +47,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /uuid/{id}:
     get:
       parameters:
@@ -56,10 +56,7 @@ paths:
         required: true
         schema:
           type: "string"
-      security:
-      - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/uuid/{id}"
@@ -70,6 +67,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "id"
@@ -78,7 +76,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/uuid/{id}"
@@ -89,10 +86,10 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /status:
     get:
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/status"
@@ -101,9 +98,9 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/status"
@@ -112,6 +109,7 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /{uuid}:
     x-amazon-apigateway-any-method:
       parameters:
@@ -121,7 +119,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "aws_proxy"
         httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-404/invocations"
         responses:
@@ -129,6 +126,7 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
   /{uuid}/{proxy+}:
     x-amazon-apigateway-any-method:
       parameters:
@@ -143,7 +141,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "aws_proxy"
         httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-404/invocations"
         responses:
@@ -154,6 +151,7 @@ paths:
         cacheKeyParameters:
         - "method.request.path.proxy"
         contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
   /{uuid}/ancestors:
     get:
       parameters:
@@ -163,7 +161,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/{uuid}/ancestors"
@@ -174,6 +171,7 @@ paths:
           integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "uuid"
@@ -182,7 +180,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/{uuid}/ancestors"
@@ -193,12 +190,12 @@ paths:
           integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /uuid:
     post:
       security:
       - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "POST"
         uri: "http://${stageVariables.VPCNLB}/uuid"
@@ -207,6 +204,7 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /file-id/{uuid}:
     get:
       parameters:
@@ -241,7 +239,6 @@ paths:
       security:
       - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/file-id/{uuid}"
@@ -254,6 +251,7 @@ paths:
           integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "uuid"
@@ -262,7 +260,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/file-id/{uuid}"
@@ -273,6 +270,7 @@ paths:
           integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /hmuuid/{id}:
     get:
       parameters:
@@ -304,10 +302,7 @@ paths:
         "403":
           description: "403 response"
           content: {}
-      security:
-      - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/hmuuid/{id}"
@@ -320,6 +315,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "id"
@@ -328,7 +324,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/hmuuid/{id}"
@@ -339,6 +334,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /hmuuid/{id}/exists:
     get:
       parameters:
@@ -370,7 +366,6 @@ paths:
       security:
       - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/hmuuid/{id}/exists"
@@ -383,6 +378,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "id"
@@ -391,7 +387,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/hmuuid/{id}/exists"
@@ -402,6 +397,7 @@ paths:
           integration.request.path.id: "method.request.path.id"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /hmuuid:
     post:
       parameters:
@@ -434,7 +430,6 @@ paths:
       security:
       - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "POST"
         uri: "http://${stageVariables.VPCNLB}/hmuuid"
@@ -443,6 +438,7 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /{uuid}/files:
     get:
       parameters:
@@ -454,7 +450,6 @@ paths:
       security:
       - SenNet-API-Gateway-Read-Group-Authorizer: []
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/{uuid}/files"
@@ -465,6 +460,7 @@ paths:
           integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       parameters:
       - name: "uuid"
@@ -473,7 +469,6 @@ paths:
         schema:
           type: "string"
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/{uuid}/files"
@@ -484,10 +479,10 @@ paths:
           integration.request.path.uuid: "method.request.path.uuid"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
   /:
     get:
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "GET"
         uri: "http://${stageVariables.VPCNLB}/"
@@ -496,9 +491,9 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     options:
       x-amazon-apigateway-integration:
-        type: "http_proxy"
         connectionId: "${stageVariables.VPCLINK}"
         httpMethod: "OPTIONS"
         uri: "http://${stageVariables.VPCNLB}/"
@@ -507,9 +502,9 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
+        type: "http_proxy"
     x-amazon-apigateway-any-method:
       x-amazon-apigateway-integration:
-        type: "aws_proxy"
         httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-404/invocations"
         responses:
@@ -517,6 +512,7 @@ paths:
             statusCode: "200"
         passthroughBehavior: "when_no_match"
         contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
 components:
   schemas:
     IdObject:
@@ -619,21 +615,21 @@ components:
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
-        type: "token"
         authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-Read-Group-Authorizer/invocations"
         authorizerResultTtlInSeconds: 0
+        type: "token"
 x-amazon-apigateway-gateway-responses:
+  ACCESS_DENIED:
+    statusCode: 403
+    responseTemplates:
+      application/json: "{ \"message\": \"$context.error.message\", \"hint\": \"$context.authorizer.key\"\
+        , \"http_method\": \"$context.httpMethod\"}"
   RESOURCE_NOT_FOUND:
     statusCode: 404
     responseTemplates:
       application/json: "{\"message\":$context.error.messageString}"
   UNAUTHORIZED:
     statusCode: 401
-    responseTemplates:
-      application/json: "{ \"message\": \"$context.error.message\", \"hint\": \"$context.authorizer.key\"\
-        , \"http_method\": \"$context.httpMethod\"}"
-  ACCESS_DENIED:
-    statusCode: 403
     responseTemplates:
       application/json: "{ \"message\": \"$context.error.message\", \"hint\": \"$context.authorizer.key\"\
         , \"http_method\": \"$context.httpMethod\"}"
