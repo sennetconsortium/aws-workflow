@@ -676,18 +676,6 @@ paths:
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         type: "http_proxy"
-  /collections:
-    get:
-      x-amazon-apigateway-integration:
-        connectionId: "${stageVariables.VPCLINK}"
-        httpMethod: "GET"
-        uri: "http://${stageVariables.VPCNLB}/collections"
-        responses:
-          default:
-            statusCode: "200"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        type: "http_proxy"
   /children/{id}:
     get:
       parameters:
@@ -726,6 +714,18 @@ paths:
             statusCode: "200"
         requestParameters:
           integration.request.path.id: "method.request.path.id"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+  /collections:
+    get:
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.VPCNLB}/collections"
+        responses:
+          default:
+            statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         type: "http_proxy"
@@ -905,7 +905,7 @@ paths:
           type: "string"
       x-amazon-apigateway-integration:
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-404/invocations"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-404/invocations"
         responses:
           default:
             statusCode: "200"
@@ -1048,6 +1048,39 @@ paths:
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         type: "http_proxy"
+  /:
+    get:
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.VPCNLB}/"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+    options:
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "OPTIONS"
+        uri: "http://${stageVariables.VPCNLB}/"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+    x-amazon-apigateway-any-method:
+      x-amazon-apigateway-integration:
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-404/invocations"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
   /datasets/{id}/prov-info:
     get:
       parameters:
@@ -1087,39 +1120,6 @@ paths:
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         type: "http_proxy"
-  /:
-    get:
-      x-amazon-apigateway-integration:
-        connectionId: "${stageVariables.VPCLINK}"
-        httpMethod: "GET"
-        uri: "http://${stageVariables.VPCNLB}/"
-        responses:
-          default:
-            statusCode: "200"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        type: "http_proxy"
-    options:
-      x-amazon-apigateway-integration:
-        connectionId: "${stageVariables.VPCLINK}"
-        httpMethod: "OPTIONS"
-        uri: "http://${stageVariables.VPCNLB}/"
-        responses:
-          default:
-            statusCode: "200"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        type: "http_proxy"
-    x-amazon-apigateway-any-method:
-      x-amazon-apigateway-integration:
-        httpMethod: "POST"
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-404/invocations"
-        responses:
-          default:
-            statusCode: "200"
-        passthroughBehavior: "when_no_match"
-        contentHandling: "CONVERT_TO_TEXT"
-        type: "aws_proxy"
   /status:
     get:
       x-amazon-apigateway-integration:
@@ -1483,6 +1483,29 @@ paths:
             statusCode: "200"
         requestParameters:
           integration.request.path.id: "method.request.path.id"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+  /constraints:
+    get:
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.VPCNLB}/constraints"
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        type: "http_proxy"
+    options:
+      x-amazon-apigateway-integration:
+        connectionId: "${stageVariables.VPCLINK}"
+        httpMethod: "OPTIONS"
+        uri: "http://${stageVariables.VPCNLB}/constraints"
+        responses:
+          default:
+            statusCode: "200"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         type: "http_proxy"
@@ -2389,22 +2412,22 @@ components:
           type: "string"
           description: "The SenNet unique identifier for the file."
   securitySchemes:
-    SenNet-API-Gateway-Read-Group-Authorizer:
-      type: "apiKey"
-      name: "Authorization"
-      in: "header"
-      x-amazon-apigateway-authtype: "custom"
-      x-amazon-apigateway-authorizer:
-        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-Read-Group-Authorizer/invocations"
-        authorizerResultTtlInSeconds: 0
-        type: "token"
     SenNet-API-Gateway-Data-Admin-Group-Authorizer:
       type: "apiKey"
       name: "Authorization"
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
-        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-Data-Admin-Group-Authorizer/invocations"
+        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-Data-Admin-Group-Authorizer/invocations"
+        authorizerResultTtlInSeconds: 0
+        type: "token"
+    SenNet-API-Gateway-Read-Group-Authorizer:
+      type: "apiKey"
+      name: "Authorization"
+      in: "header"
+      x-amazon-apigateway-authtype: "custom"
+      x-amazon-apigateway-authorizer:
+        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-Read-Group-Authorizer/invocations"
         authorizerResultTtlInSeconds: 0
         type: "token"
     SenNet-API-Gateway-Create-Group-Authorizer:
@@ -2413,7 +2436,7 @@ components:
       in: "header"
       x-amazon-apigateway-authtype: "custom"
       x-amazon-apigateway-authorizer:
-        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:450834107946:function:SenNet-API-Gateway-Create-Group-Authorizer/invocations"
+        authorizerUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:557310757627:function:SenNet-API-Gateway-Create-Group-Authorizer/invocations"
         authorizerResultTtlInSeconds: 0
         type: "token"
 x-amazon-apigateway-gateway-responses:
@@ -2423,13 +2446,13 @@ x-amazon-apigateway-gateway-responses:
       application/json: "{\n  \"message\": \"$context.error.message\",\n  \"hint\"\
         : \"$context.authorizer.key\",\n  \"http_method\": \"$context.httpMethod\"\
         \n}"
+  RESOURCE_NOT_FOUND:
+    statusCode: 404
+    responseTemplates:
+      application/json: "{\"message\":$context.error.messageString}"
   UNAUTHORIZED:
     statusCode: 401
     responseTemplates:
       application/json: "{\n  \"message\": \"$context.error.message\",\n  \"hint\"\
         : \"$context.authorizer.key\",\n  \"http_method\": \"$context.httpMethod\"\
         \n}"
-  RESOURCE_NOT_FOUND:
-    statusCode: 404
-    responseTemplates:
-      application/json: "{\"message\":$context.error.messageString}"
