@@ -1,0 +1,12 @@
+[globus_tokens]
+GLOBUS_READ_WRITE_ADMIN_TOKEN = <token expecting Allow for read authorizer, create authorizer, data admin authorizer>
+GLOBUS_READ_WRITE_TOKEN = <token expecting Allow for read authorizer and create authorizer, Deny for data admin authorizer>
+GLOBUS_READ_TOKEN = <token expecting Allow for read authorizer, Deny for create authorizer and data admin authorizer>
+GLOBUS_LOGIN_ONLY_TOKEN = <token expecting Deny for read authorizer, create authorizer, data admin authorizer>
+GLOBUS_UNAUTHORIZED_TOKEN = <token not authorized for login (typically a fake token)>
+[nlm_licensed_tokens]
+UMLS_LICENSED_TOKEN = <An valid UMLS users token expecting Allow for umls authorizer>
+UMLS_UNLICENSED_TOKEN = <A non-valide UMLS token, typically fake, like 00000000-0000-0000-0000-000000000000>
+[nlm_verification]
+VERIFICATION_UMLS_TOKEN = <A valid UMLS token which configured to validate other UMLS tokens, such as the one configured on the server>
+VERIFICATION_UMLS_URL = https://utslogin.nlm.nih.gov/validateUser

@@ -1,0 +1,32 @@
+# Ignore config files which may have sensitive settings
+*.cfg
+
+# Emacs editing backups
+*~
+
+#Mac DS Store files
+.DS_Store
+
+# Ignore __pycache__ directories in any path
+**/__pycache__
+
+# log files in any path
+**/*.log
+
+# Rotated log files
+**/*.log*
+
+# requests-cache generated sqlite
+**/*.sqlite
+
+#ignore eclipse files
+.project
+.pydevproject
+
+#ignore PyCharm files
+.idea/
+../.idea/
+venv
+
+#ignore test venv
+**/testenv/
